@@ -97,18 +97,41 @@ public class SortingTest
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	private static int[] DoBubbleSort(int[] value)
 	{
-		// TODO : Bubble Sort 를 구현하라.
-		// value는 정렬안된 숫자들의 배열이며 value.length 는 배열의 크기가 된다.
-		// 결과로 정렬된 배열은 리턴해 주어야 하며, 두가지 방법이 있으므로 잘 생각해서 사용할것.
-		// 주어진 value 배열에서 안의 값만을 바꾸고 value를 다시 리턴하거나
-		// 같은 크기의 새로운 배열을 만들어 그 배열을 리턴할 수도 있다.
+		int temp;
+		
+		for (int i = 0; i < value.length - 1; i++)
+		{
+			for (int j = 0; j < value.length - i - 1; j++)
+			{
+				if (value[j] > value[j+1])
+				{
+					temp = value[j];
+					value[j] = value[j+1];
+					value[j+1] = temp;
+				}
+			}
+		}
+
 		return (value);
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	private static int[] DoInsertionSort(int[] value)
 	{
-		// TODO : Insertion Sort 를 구현하라.
+		for (int i = 1; i < value.length; i++)
+		{
+			int item = value[i];
+			int loc = i-1;
+			
+			while (loc >= 0 && value[loc] > item)
+			{
+				value[loc+1] = value[loc];
+				loc--;
+			}
+			
+			value[loc+1] = item;
+		}
+		
 		return (value);
 	}
 
@@ -122,17 +145,122 @@ public class SortingTest
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	private static int[] DoMergeSort(int[] value)
 	{
-		// TODO : Merge Sort 를 구현하라.
+		mergeSort(value, 0, value.length-1);
 		return (value);
+	}
+	
+	private static void mergeSort(int[] value, int first, int last)
+	{
+		if (first < last)
+		{
+			int mid = (first+last)/2;
+			mergeSort(value, first, mid);
+			mergeSort(value, mid+1, last);
+			merge(value, first, mid, last);
+		}
+	}
+	
+	private static void merge(int[] value, int first, int mid, int last)
+	{
+		int[] tempArr = new int[last-first+1];
+		int leftIndex = first, rightIndex = mid+1, tempIndex = 0;
+		
+		while (leftIndex <= mid && rightIndex <= last)
+		{
+			if (value[leftIndex] < value[rightIndex])
+			{
+				tempArr[tempIndex] = value[leftIndex];
+				leftIndex++;
+			}
+			
+			else
+			{
+				tempArr[tempIndex] = value[rightIndex];
+				rightIndex++;
+			}
+			
+			tempIndex++;
+		}
+		
+		// move rest to tempArr
+		if (leftIndex <= mid)
+		{
+			for (int i = leftIndex; i <= mid; i++)
+			{
+				tempArr[tempIndex] = value[i];
+				tempIndex++;
+			}
+		}
+		
+		if (rightIndex <= last)
+		{
+			for (int i = rightIndex; i <= last; i++)
+			{
+				tempArr[tempIndex] = value[i];
+				tempIndex++;
+			}
+		}
+		
+		for (int k = 0; k < tempArr.length; k++)
+			value[first+k] = tempArr[k]; // copy to original array
+			
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	private static int[] DoQuickSort(int[] value)
 	{
 		// TODO : Quick Sort 를 구현하라.
+		quickSort(value, 0, value.length-1);
 		return (value);
 	}
 
+	private static void quickSort(int[] value, int first, int last)
+	{
+		if (first < last)
+		{
+			Random rand = new Random();
+			int pivotIndex = rand.nextInt(last-first+1) + first;
+			
+			pivotIndex = partition(value, pivotIndex, first, last);
+			quickSort(value, first, pivotIndex-1);
+			quickSort(value, pivotIndex+1, last);
+		}
+
+	}
+	
+	private static int partition(int[] value, int pivotIndex, int first, int last)
+	{
+		// modification from Data Abstraction and Problem Solving with Java
+		int pivot = value[pivotIndex];
+		swap(value, pivotIndex, first);
+		
+		int lastSmaller = first, firstUnsorted = first+1;
+		
+		while(firstUnsorted > last)
+		{
+			if (value[firstUnsorted] < pivot)
+			{
+				swap(value, firstUnsorted, lastSmaller+1);
+				lastSmaller++;
+				firstUnsorted++;
+			}
+			
+			else
+			{
+				firstUnsorted++;
+			}
+		}
+		
+		swap(value, lastSmaller, first); // pivotItem in right position
+		return lastSmaller; 
+	}
+	
+	private static void swap(int[] value, int index1, int index2)
+	{
+		int temp = value[index1];
+		value[index1] = value[index2];
+		value[index2] = temp;
+	}
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	private static int[] DoRadixSort(int[] value)
 	{
