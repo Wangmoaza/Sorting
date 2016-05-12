@@ -1,5 +1,6 @@
 import java.io.*;
 import java.util.*;
+import java.lang.Integer;
 
 public class SortingTest
 {
@@ -209,7 +210,6 @@ public class SortingTest
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	private static int[] DoQuickSort(int[] value)
 	{
-		// TODO : Quick Sort 를 구현하라.
 		quickSort(value, 0, value.length-1);
 		return (value);
 	}
@@ -230,13 +230,12 @@ public class SortingTest
 	
 	private static int partition(int[] value, int pivotIndex, int first, int last)
 	{
-		// modification from Data Abstraction and Problem Solving with Java
+		// modification from lecture slide chapter 10
 		int pivot = value[pivotIndex];
 		swap(value, pivotIndex, first);
-		
 		int lastSmaller = first, firstUnsorted = first+1;
 		
-		while(firstUnsorted > last)
+		while(firstUnsorted <= last)
 		{
 			if (value[firstUnsorted] < pivot)
 			{
@@ -244,11 +243,8 @@ public class SortingTest
 				lastSmaller++;
 				firstUnsorted++;
 			}
-			
 			else
-			{
 				firstUnsorted++;
-			}
 		}
 		
 		swap(value, lastSmaller, first); // pivotItem in right position
@@ -265,6 +261,43 @@ public class SortingTest
 	private static int[] DoRadixSort(int[] value)
 	{
 		// TODO : Radix Sort 를 구현하라.
+		// radix sort direction
+		ArrayList<Integer> negList = new ArrayList<>();
+		ArrayList<Integer> posList = new ArrayList<>();
+		int negMin = 0, posMax = 0;
+		
+		for (int i = 0; i < value.length; i++)
+		{
+			if (value[i] < 0)
+			{
+				negList.add(value[i]);
+				negMin = value[i] < negMin ? value[i] : negMin;
+				
+			}
+			
+			else
+			{
+				posList.add(value[i]);
+				posMax = value[i] > posMax ? value[i] : posMax;
+			}
+		}
+		
+		int[] posSorted = radixSort(posList, posMax, 1);
+		int[] negSorted = radixSort(negList, negMin, -1);
+		
+		// 두 array 합침
+		int i;
+		for (i = 0; i < negSorted.length; i++)
+			value[i] = negSorted[i];
+		
+		for (; i < negSorted.length + posSorted.length; i++)
+			value[i] = posSorted[i - negSorted.length];
+		
 		return (value);
+	}
+	
+	private static int[] radixSort(ArrayList<Integer> list, int bound, int direc)
+	{
+		
 	}
 }
