@@ -140,10 +140,40 @@ public class SortingTest
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	private static int[] DoHeapSort(int[] value)
 	{
-		// TODO : Heap Sort 를 구현하라.
+		// copy from lecture slide chapter 12
+		for (int i = (value.length - 1)/2; i >= 0; i--)
+		{
+			percolateDown(value, i, value.length-1);
+		}
+		
+		for (int size = value.length - 2; size >= 0; size--)
+		{
+			swap(value, 0, size+1);
+			percolateDown(value, 0, size);
+		}
+		
 		return (value);
 	}
-
+	private static void percolateDown(int[] value, int index, int size)
+	{
+		// copy from lecture slide chapter 12
+		int leftChild = 2 * index;
+		int rightChild = 2 * index + 1;
+		
+		if (leftChild <= size)
+		{
+			if ((rightChild <= size) && (value[leftChild] < value[rightChild]))
+			{
+				leftChild = rightChild;
+			}
+			
+			if (value[index] < value[leftChild])
+			{
+				swap(value, index, leftChild);
+				percolateDown(value, leftChild, size);
+			}
+		}
+	}
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	private static int[] DoMergeSort(int[] value)
 	{
@@ -194,7 +224,7 @@ public class SortingTest
 			}
 		}
 		
-		if (rightIndex <= last)
+		else if (rightIndex <= last)
 		{
 			for (int i = rightIndex; i <= last; i++)
 			{
@@ -261,7 +291,6 @@ public class SortingTest
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	private static int[] DoRadixSort(int[] value)
 	{
-		// TODO : Radix Sort 를 구현하라.
 		int absMax = 0;
 		int fold;
 		
@@ -278,10 +307,30 @@ public class SortingTest
 		for (int i = 0; i < 19; i++)
 			bucketList.add(new LinkedList<Integer>());
 		
-		
+		// radix sort
 		for (fold = 1; absMax >= fold; fold = fold * 10)
 		{
+			stableSort(value, bucketList, fold);
 		}
 		return (value);
+	}
+	
+	private static void stableSort(int[] value, ArrayList<LinkedList<Integer>> bucketList, int fold)
+	{
+		for (int i = 0; i < value.length; i++)
+		{
+			int temp = value[i] / fold;			
+			bucketList.get(temp % 10 + 9).addLast(value[i]);
+		}
+		
+		int valueIndex = 0;
+		for (int bucketIndex = 0; bucketIndex < 19; bucketIndex++)
+		{
+			while (!bucketList.get(bucketIndex).isEmpty())
+			{
+				value[valueIndex] = bucketList.get(bucketIndex).removeFirst().intValue();
+				valueIndex++;
+			}
+		}
 	}
 }
