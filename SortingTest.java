@@ -249,8 +249,6 @@ public class SortingTest
 	{
 		if (first < last)
 		{
-			//Random rand = new Random();
-			//int pivotIndex = rand.nextInt(last-first+1) + first;
 			int pivotIndex = (first + last)/2 ;
 			pivotIndex = partition(value, pivotIndex, first, last);
 			quickSort(value, first, pivotIndex-1);
@@ -301,33 +299,41 @@ public class SortingTest
 				absMax = value[i];
 		}
 		
-		// make bucket
-		ArrayList<Queue<Integer>> bucketList = new ArrayList<>();
-		
-		for (int i = 0; i < 19; i++)
-			bucketList.add(new LinkedList<Integer>());
-		
 		// radix sort
 		for (fold = 1; absMax >= fold; fold = fold * 10)
 		{
-			// put into buckets
-			for (int i = 0; i < value.length; i++)
-			{
-				int temp = value[i] / fold;			
-				bucketList.get(temp % 10 + 9).add(value[i]);
-			}
-			
-			// back to value
-			int valueIndex = 0;
-			for (int bucketIndex = 0; bucketIndex < 19; bucketIndex++)
-			{
-				while (!bucketList.get(bucketIndex).isEmpty())
-				{
-					value[valueIndex] = bucketList.get(bucketIndex).remove();
-					valueIndex++;
-				}
-			}
+			value = countingSort(value, fold);
 		}
+		
 		return (value);
+	}
+	
+	private static int[] countingSort(int[] value, int fold)
+	{
+		// modification from http://www.opendatastructures.org/ods-java/11_2_Counting_Sort_Radix_So.html
+		int[] count = new int[19];
+		int[] sorted = new int[value.length];
+		
+		// frequency of digit
+		for (int i = 0; i < value.length; i++)
+		{
+			int digit = (value[i] / fold) % 10 + 9;
+			count[digit]++;
+		}
+		
+		// accumulation
+		for (int k = 1; k < count.length; k++)
+		{
+			count[k] += count[k-1];
+		}
+		
+		for (int m = value.length -1; m >= 0; m--)
+		{
+			int digit = (value[m] / fold) % 10 + 9;
+			sorted[count[digit]-1] = value[m];
+			count[digit]--;
+		}
+		
+		return sorted;
 	}
 }
