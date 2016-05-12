@@ -1,6 +1,7 @@
 import java.io.*;
 import java.util.*;
 import java.lang.Integer;
+import java.lang.Math;
 
 public class SortingTest
 {
@@ -261,43 +262,26 @@ public class SortingTest
 	private static int[] DoRadixSort(int[] value)
 	{
 		// TODO : Radix Sort 를 구현하라.
-		// radix sort direction
-		ArrayList<Integer> negList = new ArrayList<>();
-		ArrayList<Integer> posList = new ArrayList<>();
-		int negMin = 0, posMax = 0;
+		int absMax = 0;
+		int fold;
 		
+		// find absolute max number
 		for (int i = 0; i < value.length; i++)
 		{
-			if (value[i] < 0)
-			{
-				negList.add(value[i]);
-				negMin = value[i] < negMin ? value[i] : negMin;
-				
-			}
-			
-			else
-			{
-				posList.add(value[i]);
-				posMax = value[i] > posMax ? value[i] : posMax;
-			}
+			if (Math.abs(value[i]) > absMax)
+				absMax = value[i];
 		}
 		
-		int[] posSorted = radixSort(posList, posMax, 1);
-		int[] negSorted = radixSort(negList, negMin, -1);
+		// make buckets
+		ArrayList<LinkedList<Integer>> bucketList = new ArrayList<>();
 		
-		// 두 array 합침
-		int i;
-		for (i = 0; i < negSorted.length; i++)
-			value[i] = negSorted[i];
+		for (int i = 0; i < 19; i++)
+			bucketList.add(new LinkedList<Integer>());
 		
-		for (; i < negSorted.length + posSorted.length; i++)
-			value[i] = posSorted[i - negSorted.length];
 		
+		for (fold = 1; absMax >= fold; fold = fold * 10)
+		{
+		}
 		return (value);
-	}
-	
-	private static int[] radixSort(ArrayList<Integer> list, int bound, int direc)
-	{
-		
 	}
 }
