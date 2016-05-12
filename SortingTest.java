@@ -249,9 +249,9 @@ public class SortingTest
 	{
 		if (first < last)
 		{
-			Random rand = new Random();
-			int pivotIndex = rand.nextInt(last-first+1) + first;
-			
+			//Random rand = new Random();
+			//int pivotIndex = rand.nextInt(last-first+1) + first;
+			int pivotIndex = (first + last)/2 ;
 			pivotIndex = partition(value, pivotIndex, first, last);
 			quickSort(value, first, pivotIndex-1);
 			quickSort(value, pivotIndex+1, last);
@@ -301,8 +301,8 @@ public class SortingTest
 				absMax = value[i];
 		}
 		
-		// make buckets
-		ArrayList<LinkedList<Integer>> bucketList = new ArrayList<>();
+		// make bucket
+		ArrayList<Queue<Integer>> bucketList = new ArrayList<>();
 		
 		for (int i = 0; i < 19; i++)
 			bucketList.add(new LinkedList<Integer>());
@@ -310,27 +310,24 @@ public class SortingTest
 		// radix sort
 		for (fold = 1; absMax >= fold; fold = fold * 10)
 		{
-			stableSort(value, bucketList, fold);
-		}
-		return (value);
-	}
-	
-	private static void stableSort(int[] value, ArrayList<LinkedList<Integer>> bucketList, int fold)
-	{
-		for (int i = 0; i < value.length; i++)
-		{
-			int temp = value[i] / fold;			
-			bucketList.get(temp % 10 + 9).addLast(value[i]);
-		}
-		
-		int valueIndex = 0;
-		for (int bucketIndex = 0; bucketIndex < 19; bucketIndex++)
-		{
-			while (!bucketList.get(bucketIndex).isEmpty())
+			// put into buckets
+			for (int i = 0; i < value.length; i++)
 			{
-				value[valueIndex] = bucketList.get(bucketIndex).removeFirst().intValue();
-				valueIndex++;
+				int temp = value[i] / fold;			
+				bucketList.get(temp % 10 + 9).add(value[i]);
+			}
+			
+			// back to value
+			int valueIndex = 0;
+			for (int bucketIndex = 0; bucketIndex < 19; bucketIndex++)
+			{
+				while (!bucketList.get(bucketIndex).isEmpty())
+				{
+					value[valueIndex] = bucketList.get(bucketIndex).remove();
+					valueIndex++;
+				}
 			}
 		}
+		return (value);
 	}
 }
